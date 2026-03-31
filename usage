@@ -1,0 +1,17 @@
+# Make executable
+chmod +x valkyrie
+
+# Run a file
+./valkyrie example.vk
+
+# REPL mode
+./valkyrie
+
+# Compile to bytecode (WORA)
+./valkyrie compile example.vk
+
+# Evolve code automatically
+./valkyrie evolve example.vk
+
+# Install globally
+./setup.sh
