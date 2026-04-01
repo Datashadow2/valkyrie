@@ -140,5 +140,3 @@ Here’s the concise set of **rules and conventions for writing any Valkyrie scr
 * Errors are displayed in blue; use `call color_print` for emphasis.
 
 ---
-
-Do you want me to do that?
