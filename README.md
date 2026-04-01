@@ -1,28 +1,144 @@
-# valkyrie
+Here’s the concise set of **rules and conventions for writing any Valkyrie script** based on the final interpreter and weapons system:
 
-**Write once. Run anywhere. Evolve on its own.**
+---
 
-Valkyrie is a multi-purpose systems programming language combining the simplicity of Python, the performance of C/Java, and the self-evolution capabilities of esoteric languages like Malbolge — designed for malware development, system design, and automation.
+### 1. **Variables**
 
-## Core Principles
+* Declared with `let`:
 
-- **Pythonic syntax** — readable, expressive, approachable
-- **C/Java performance** — optional manual memory, JIT/AOT compilation, zero-cost abstractions
-- **WORA (Write Once, Run Anywhere)** — portable bytecode + platform-specific VMs
-- **Self-evolving code** — programs that optimize, mutate, and adapt at runtime
-- **Unsafe mode** — direct syscalls, memory manipulation, process injection for exploit development
+  ```vk
+  let x = 10
+  let name = "Valkyrie"
+  ```
+* Variables are **dynamically typed**.
+* `_result` stores the last function/call result automatically.
 
-## Quick Example
+---
 
-```valkyrie
-# High-level automation (Python style)
-def deploy_servers():
-    for ip in read_config("servers.txt"):
-        ssh.connect(ip).run("systemctl restart nginx")
+### 2. **Expressions**
 
-# Low-level exploit (C style, unsafe block)
-unsafe:
-    let shellcode = b"\x48\x31\xc0\x50..."
-    let ptr = mmap(0x1000, PROT_EXEC | PROT_WRITE)
-    memcpy(ptr, shellcode, len(shellcode))
-    ((void(*)())ptr)()
+* Simple math: `+`, `-`, `*`, `/`
+
+  ```vk
+  let total = score + bonus
+  ```
+* Comparisons: `==`, `!=`, `<`, `>`, `<=`, `>=`
+* **No automatic complex expression parsing**: `(a+b)*c` may fail; use intermediate variables.
+* **Slicing / indexing** requires assigning to a variable:
+
+  ```vk
+  call call_lang python "os" "listdir" "."
+  call str _result
+  let first3 = _result[:3]
+  ```
+
+---
+
+### 3. **Printing / Output**
+
+* `print` prints evaluated expressions:
+
+  ```vk
+  print "Score: " + str(total)
+  ```
+* All interpreter output (prompt, debug messages) is **green by default**.
+* Errors are **blue**, warnings optional.
+
+---
+
+### 4. **Conditionals**
+
+* Single-line:
+
+  ```vk
+  if total >= 90 then print "Pass"
+  ```
+* Multi-line:
+
+  ```vk
+  if total >= 90
+      print "Pass"
+      call color_print "Congrats!" green
+  endif
+  ```
+
+---
+
+### 5. **Functions**
+
+* Define with `fn` / `endfn`:
+
+  ```vk
+  fn double n
+      mul n 2
+      return n
+  endfn
+  ```
+* Local variables are temporary, globals restored after call.
+* `_result` captures return value if used outside function.
+
+---
+
+### 6. **Calls to Weapons / External Languages**
+
+* Call built-in weapon:
+
+  ```vk
+  call file_write "test.txt" "Hello"
+  ```
+* Cross-language:
+
+  ```vk
+  call call_lang python "random" "randint" 1 100
+  call call_lang python "os" "listdir" "."
+  ```
+* Rust, C, Go, Java all go through `call_lang` wrappers (compile if needed).
+
+---
+
+### 7. **Stack Operations**
+
+* Push / pop variables:
+
+  ```vk
+  push x
+  pop y
+  ```
+
+---
+
+### 8. **Control**
+
+* `goto` for labels:
+
+  ```vk
+  start:
+      print "Loop"
+      goto start
+  ```
+* `hlt` to halt execution.
+* `_result` always captures the last call or computation result.
+
+---
+
+### 9. **User Input**
+
+* Use `call input "Prompt"` (red by default):
+
+  ```vk
+  call input "Enter your name: "
+  print "Hello, " + _result
+  ```
+
+---
+
+### 10. **Best Practices / Gotchas**
+
+* Convert types explicitly with `call str`, `call int`, etc. before concatenation.
+* Always assign complex expressions to variables before using them in prints or calls.
+* Avoid nested operators; break into steps.
+* Errors are displayed in blue; use `call color_print` for emphasis.
+
+---
+
+Do you want me to do that?
